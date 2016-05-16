@@ -6,6 +6,7 @@ var express = require("express"),
 	multer = require("multer"),
 	Excel = require("exceljs"),
 	moment = require("moment"),
+	Log = require("log"),
 	bodyParser = require("body-parser");
 
 app.set("view engine", "ejs");
@@ -25,6 +26,7 @@ var storage = multer.diskStorage({
 	}
 });
 
+var log = new Log("info", fs.createWriteStream(".\\logs\\app_log"+(new Date.now()).getTime()+".txt"));
 var upload = multer({storage: storage});
 
 var transactionSchema = new mongoose.Schema({
@@ -71,6 +73,7 @@ app.get("/uploadtrx", function(req, res){
 
 app.post("/uploadcafe", upload.single("data"), function(req, res){
 	console.log(req.file.filename);
+	log.info("new cafe data uploaded");
 	var workbook = new Excel.Workbook();
 	workbook.xlsx.readFile(".\\uploads\\"+req.file.filename)
 		.then(function(){
@@ -102,6 +105,7 @@ app.post("/uploadcafe", upload.single("data"), function(req, res){
 
 app.post("/uploadtrx", upload.single("data"), function(req, res){
 	console.log(req.file.filename);
+	log.info("new transaction data uploaded: "+req.file.filename);
 	var workbook = new Excel.Workbook();
 	workbook.xlsx.readFile(".\\uploads\\"+req.file.filename)
 		.then(function(){
@@ -142,7 +146,7 @@ app.post("/uploadtrx", upload.single("data"), function(req, res){
 });
 
 app.get("/trxdays", function(req, res){
-
+	log.info("trx days requested");
 	Transaction.aggregate([
 	{
 		$match: {period: {$lte: 7}}
