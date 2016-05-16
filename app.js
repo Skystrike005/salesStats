@@ -26,7 +26,8 @@ var storage = multer.diskStorage({
 	}
 });
 
-var log = new Log("info", fs.createWriteStream(".\\logs\\app_log"+(new Date.now()).getTime()+".txt"));
+var now = new Date.now();
+var log = new Log("info", fs.createWriteStream(".\\logs\\app_log"+now.getTime()+".txt"));
 var upload = multer({storage: storage});
 
 var transactionSchema = new mongoose.Schema({
