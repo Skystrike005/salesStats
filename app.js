@@ -26,7 +26,7 @@ var storage = multer.diskStorage({
 	}
 });
 
-var now = new Date.now();
+var now = new Date(Date.now());
 var log = new Log("info", fs.createWriteStream(".\\logs\\app_log"+now.getTime()+".txt"));
 var upload = multer({storage: storage});
 
